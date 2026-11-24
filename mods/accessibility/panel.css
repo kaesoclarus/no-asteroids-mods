@@ -1,0 +1,45 @@
+/* Accessibility pack panel. Sized in rem so it grows with the interface-size setting. */
+#na11y {
+  position: fixed; inset: 0; z-index: 2147483646;
+  display: none; align-items: center; justify-content: center;
+  background: rgba(0, 0, 0, 0.55);
+  font: 0.95rem/1.4 Inter, system-ui, sans-serif; color: #eef2f7;
+}
+#na11y.open { display: flex; }
+#na11y .na11y-box {
+  width: min(34rem, 92vw); max-height: 90vh; overflow-y: auto;
+  background: #11161d; border: 1px solid #3a4656; border-radius: 0.6rem;
+  padding: 1rem 1.25rem; box-shadow: 0 1rem 3rem rgba(0, 0, 0, 0.6);
+}
+#na11y header { display: flex; align-items: center; justify-content: space-between; }
+#na11y h2 { margin: 0; font-size: 1.35rem; }
+#na11y h3 { margin: 1rem 0 0.4rem; font-size: 1rem; color: #9fb3c8; text-transform: uppercase; letter-spacing: 0.06em; }
+#na11y .na11y-x { font-size: 1.5rem; line-height: 1; background: none; border: 0; color: #eef2f7; cursor: pointer; padding: 0.2rem 0.5rem; }
+#na11y .na11y-pal {
+  display: block; padding: 0.55rem 0.7rem; margin: 0.35rem 0; border: 1px solid #2a3440;
+  border-radius: 0.45rem; cursor: pointer;
+}
+#na11y .na11y-pal.on { border-color: #8fd0ff; background: #182230; }
+#na11y .na11y-pal input { margin: 0 0.5rem 0 0; vertical-align: middle; }
+#na11y .na11y-pal small { display: block; color: #9fb3c8; margin: 0.1rem 0 0 1.6rem; }
+#na11y .na11y-sws { display: flex; flex-wrap: wrap; gap: 0.35rem 0.8rem; margin: 0.4rem 0 0 1.6rem; }
+#na11y .na11y-sw { display: inline-flex; align-items: center; gap: 0.35rem; font-size: 0.85rem; }
+#na11y .na11y-sw i { width: 0.9rem; height: 0.9rem; border-radius: 50%; display: inline-block; }
+#na11y .na11y-scales { display: flex; flex-wrap: wrap; gap: 0.4rem; }
+#na11y .na11y-scales button {
+  font: inherit; color: #eef2f7; background: #1b2430; border: 1px solid #3a4656;
+  border-radius: 0.4rem; padding: 0.35rem 0.8rem; cursor: pointer;
+}
+#na11y .na11y-scales button.on { background: #2b4a66; border-color: #8fd0ff; }
+#na11y button:focus-visible, #na11y input:focus-visible { outline: 2px solid #ffd060; outline-offset: 2px; }
+#na11y .na11y-warn { color: #ffd060; margin: 0.5rem 0 0; }
+#na11y .na11y-dim { color: #9fb3c8; font-size: 0.85rem; margin: 0.45rem 0 0; }
+#na11y footer { margin-top: 1rem; color: #6f8296; font-size: 0.8rem; }
+
+.na11y-hint {
+  position: fixed; left: 50%; top: 1.2rem; transform: translateX(-50%); z-index: 2147483646;
+  font: 0.95rem/1.3 Inter, system-ui, sans-serif; color: #fff;
+  background: rgba(17, 22, 29, 0.92); border: 1px solid #3a4656; border-radius: 0.45rem;
+  padding: 0.55rem 0.9rem; pointer-events: none; transition: opacity 2s;
+}
+.na11y-hint.gone { opacity: 0; }

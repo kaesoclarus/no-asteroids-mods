@@ -1,0 +1,242 @@
+{
+    "name":  "Accessibility Pack",
+    "version":  "1.2.0",
+    "author":  "no-asteroids-mods",
+    "description":  "Colour-blind-safe ore palettes and UI scaling. Press F10 in game for settings.",
+    "scripts":  [
+                    "palettes.js",
+                    "panel.js"
+                ],
+    "styles":  [
+                   "panel.css"
+               ],
+    "patches":  [
+                    {
+                        "id":  "prelude",
+                        "file":  "/assets/index-*.js",
+                        "prepend":  "palettes.js"
+                    },
+                    {
+                        "id":  "glow-ice",
+                        "file":  "/assets/index-*.js",
+                        "find":  "glow:[`#7cc4ff`",
+                        "replace":  "glow:[self.__naA11y.c(`ice`,`glow`,`#7cc4ff`)",
+                        "expect":  1
+                    },
+                    {
+                        "id":  "glow-crystal",
+                        "file":  "/assets/index-*.js",
+                        "find":  "glow:[`#a46bff`",
+                        "replace":  "glow:[self.__naA11y.c(`crystal`,`glow`,`#a46bff`)",
+                        "expect":  1
+                    },
+                    {
+                        "id":  "glow-plasmite",
+                        "file":  "/assets/index-*.js",
+                        "find":  "glow:[`#ff7a28`",
+                        "replace":  "glow:[self.__naA11y.c(`plasmite`,`glow`,`#ff7a28`)",
+                        "expect":  1
+                    },
+                    {
+                        "id":  "glow-neutronium",
+                        "file":  "/assets/index-*.js",
+                        "find":  "glow:[`#8fd0ff`",
+                        "replace":  "glow:[self.__naA11y.c(`neutronium`,`glow`,`#8fd0ff`)",
+                        "expect":  1
+                    },
+                    {
+                        "id":  "glow-darkMatter",
+                        "file":  "/assets/index-*.js",
+                        "find":  "glow:[`#c9a8ff`",
+                        "replace":  "glow:[self.__naA11y.c(`darkMatter`,`glow`,`#c9a8ff`)",
+                        "expect":  1
+                    },
+                    {
+                        "id":  "glow-antimatter",
+                        "file":  "/assets/index-*.js",
+                        "find":  "glow:[`#ff4fa8`",
+                        "replace":  "glow:[self.__naA11y.c(`antimatter`,`glow`,`#ff4fa8`)",
+                        "expect":  1
+                    },
+                    {
+                        "id":  "trail-ice",
+                        "file":  "/assets/index-*.js",
+                        "find":  "trail:`#8fd8ff`",
+                        "replace":  "trail:self.__naA11y.c(`ice`,`trail`,`#8fd8ff`)",
+                        "expect":  1
+                    },
+                    {
+                        "id":  "trail-iron",
+                        "file":  "/assets/index-*.js",
+                        "find":  "trail:`#ffae6a`",
+                        "replace":  "trail:self.__naA11y.c(`iron`,`trail`,`#ffae6a`)",
+                        "expect":  1
+                    },
+                    {
+                        "id":  "trail-nickel",
+                        "file":  "/assets/index-*.js",
+                        "find":  "trail:`#e6e2d0`",
+                        "replace":  "trail:self.__naA11y.c(`nickel`,`trail`,`#e6e2d0`)",
+                        "expect":  1
+                    },
+                    {
+                        "id":  "trail-titanium",
+                        "file":  "/assets/index-*.js",
+                        "find":  "trail:`#9db4ff`",
+                        "replace":  "trail:self.__naA11y.c(`titanium`,`trail`,`#9db4ff`)",
+                        "expect":  1
+                    },
+                    {
+                        "id":  "trail-gold",
+                        "file":  "/assets/index-*.js",
+                        "find":  "trail:`#ffd060`",
+                        "replace":  "trail:self.__naA11y.c(`gold`,`trail`,`#ffd060`)",
+                        "expect":  1
+                    },
+                    {
+                        "id":  "trail-crystal",
+                        "file":  "/assets/index-*.js",
+                        "find":  "trail:`#b07aff`",
+                        "replace":  "trail:self.__naA11y.c(`crystal`,`trail`,`#b07aff`)",
+                        "expect":  1
+                    },
+                    {
+                        "id":  "trail-plasmite",
+                        "file":  "/assets/index-*.js",
+                        "find":  "trail:`#ff8a30`",
+                        "replace":  "trail:self.__naA11y.c(`plasmite`,`trail`,`#ff8a30`)",
+                        "expect":  1
+                    },
+                    {
+                        "id":  "trail-neutronium",
+                        "file":  "/assets/index-*.js",
+                        "find":  "trail:`#a8dcff`",
+                        "replace":  "trail:self.__naA11y.c(`neutronium`,`trail`,`#a8dcff`)",
+                        "expect":  1
+                    },
+                    {
+                        "id":  "trail-darkMatter",
+                        "file":  "/assets/index-*.js",
+                        "find":  "trail:`#b088ff`",
+                        "replace":  "trail:self.__naA11y.c(`darkMatter`,`trail`,`#b088ff`)",
+                        "expect":  1
+                    },
+                    {
+                        "id":  "trail-antimatter",
+                        "file":  "/assets/index-*.js",
+                        "find":  "trail:`#ff60b8`",
+                        "replace":  "trail:self.__naA11y.c(`antimatter`,`trail`,`#ff60b8`)",
+                        "expect":  1
+                    },
+                    {
+                        "id":  "voxel-ice",
+                        "file":  "/assets/index-*.js",
+                        "find":  "{rgb:[150,212,248],glow:12,",
+                        "replace":  "{rgb:self.__naA11y.rgb(`ice`,[150,212,248]),glow:12,",
+                        "expect":  1
+                    },
+                    {
+                        "id":  "voxel-iron",
+                        "file":  "/assets/index-*.js",
+                        "find":  "{rgb:[156,84,48],glow:0,",
+                        "replace":  "{rgb:self.__naA11y.rgb(`iron`,[156,84,48]),glow:0,",
+                        "expect":  1
+                    },
+                    {
+                        "id":  "voxel-gold",
+                        "file":  "/assets/index-*.js",
+                        "find":  "{rgb:[255,196,60],glow:45,",
+                        "replace":  "{rgb:self.__naA11y.rgb(`gold`,[255,196,60]),glow:45,",
+                        "expect":  1
+                    },
+                    {
+                        "id":  "voxel-crystal",
+                        "file":  "/assets/index-*.js",
+                        "find":  "{rgb:[165,95,255],glow:150,",
+                        "replace":  "{rgb:self.__naA11y.rgb(`crystal`,[165,95,255]),glow:150,",
+                        "expect":  1
+                    },
+                    {
+                        "id":  "voxel-plasmite",
+                        "file":  "/assets/index-*.js",
+                        "find":  "{rgb:[255,122,40],glow:170,",
+                        "replace":  "{rgb:self.__naA11y.rgb(`plasmite`,[255,122,40]),glow:170,",
+                        "expect":  1
+                    },
+                    {
+                        "id":  "voxel-neutronium",
+                        "file":  "/assets/index-*.js",
+                        "find":  "{rgb:[205,232,255],glow:90,",
+                        "replace":  "{rgb:self.__naA11y.rgb(`neutronium`,[205,232,255]),glow:90,",
+                        "expect":  1
+                    },
+                    {
+                        "id":  "voxel-darkMatter",
+                        "file":  "/assets/index-*.js",
+                        "find":  "{rgb:[30,18,42],glow:30,",
+                        "replace":  "{rgb:self.__naA11y.rgb(`darkMatter`,[30,18,42]),glow:30,",
+                        "expect":  1
+                    },
+                    {
+                        "id":  "voxel-antimatter",
+                        "file":  "/assets/index-*.js",
+                        "find":  "{rgb:[255,72,165],glow:200,",
+                        "replace":  "{rgb:self.__naA11y.rgb(`antimatter`,[255,72,165]),glow:200,",
+                        "expect":  1
+                    },
+                    {
+                        "id":  "voxel-nickel",
+                        "file":  "/assets/index-*.js",
+                        "find":  "{rgb:[186,182,166],glow:0,",
+                        "replace":  "{rgb:self.__naA11y.rgb(`nickel`,[186,182,166]),glow:0,",
+                        "expect":  1
+                    },
+                    {
+                        "id":  "voxel-titanium",
+                        "file":  "/assets/index-*.js",
+                        "find":  "{rgb:[104,124,176],glow:0,",
+                        "replace":  "{rgb:self.__naA11y.rgb(`titanium`,[104,124,176]),glow:0,",
+                        "expect":  1
+                    },
+                    {
+                        "id":  "tex-atlas",
+                        "file":  "/assets/index-*.js",
+                        "regex":  true,
+                        "find":  "\\{albedo:(\\w+),detail:(\\w+),fracture:(\\w+),layers:(\\w+)\\}\\}catch\\((\\w+)\\)\\{(\\w+)\\?\\.\\(\\5,(\\w+)\\.albedo\\)\\}",
+                        "replace":  "{albedo:await self.__naA11y.atlas($1,$3,$4,$7.albedo),detail:$2,fracture:$3,layers:$4}}catch($5){$6?.($5,$7.albedo)}",
+                        "expect":  1
+                    },
+                    {
+                        "id":  "live-materials",
+                        "file":  "/assets/index-*.js",
+                        "regex":  true,
+                        "find":  "(function (\\w+)\\((\\w+)\\)\\{let (\\w+)=\\[\\],(\\w+)=\\[\\],(\\w+)=\\[\\],(\\w+)=\\[\\],\\w+=new \\w+;for\\(let \\w+=0;\\w+\u003c\\w+\\.length;\\w+\\+\\+\\)\\{let \\w+=(\\w+)\\[\\w+\\]\\?\\?\\8\\[(\\w+)\\.stone\\][\\s\\S]{0,1200}?)return\\{a:\\4,b:\\5,c:\\6,d:\\7\\}\\}",
+                        "replace":  "$1return self.__naA11y.mats({a:$4,b:$5,c:$6,d:$7},$8,$9)}",
+                        "expect":  1
+                    },
+                    {
+                        "id":  "live-trails",
+                        "file":  "/assets/index-*.js",
+                        "regex":  true,
+                        "find":  "let (\\w+)=(\\w+)\\.map\\(\\(e,t\\)=\u003enew (\\w+)\\((\\w+)\\[t\\]\\?\\.trail\\?\\?`#(000000|ffffff)`\\)\\)",
+                        "replace":  "let $1=self.__naA11y.trails($2.map((e,t)=\u003enew $3($4[t]?.trail??`#$5`)))",
+                        "expect":  2
+                    },
+                    {
+                        "id":  "live-table",
+                        "file":  "/assets/index-*.js",
+                        "regex":  true,
+                        "find":  "(\\w+)\\.forEach\\(\\(e,t\\)=\u003e\\{(\\w+)\\.set\\(e\\.rgb,t\\*3\\),(\\w+)\\[t\\]=e\\.glow;for\\(let n=0;n\u003c3;n\\+\\+\\)(\\w+)\\[t\\*3\\+n\\]=\\(e\\.rgb\\[n\\]/255\\)\\*\\*2\\.2\\}\\)",
+                        "replace":  "$\u0026,self.__naA11y.table($1,$2,$4)",
+                        "expect":  1
+                    },
+                    {
+                        "id":  "live-surface",
+                        "file":  "/assets/index-*.js",
+                        "regex":  true,
+                        "find":  "uSurfA:\\{value:(\\w+)\\.surfaces\\.albedo\\}",
+                        "replace":  "uSurfA:self.__naA11y.surf({value:$1.surfaces.albedo})",
+                        "expect":  1
+                    }
+                ]
+}

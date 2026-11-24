@@ -1,0 +1,13 @@
+# per-player state the tools create inside a game's mods folder
+settings.json
+_backup/
+_screenshots/
+loader.json
+
+# save backups
+*.zip
+
+# OS clutter
+Thumbs.db
+desktop.ini
+.DS_Store
