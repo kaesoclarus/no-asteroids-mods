@@ -11,3 +11,6 @@ loader.json
 Thumbs.db
 desktop.ini
 .DS_Store
+
+# release zips
+dist/
