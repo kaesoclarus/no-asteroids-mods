@@ -8,7 +8,7 @@ Unofficial tools for **No Asteroids** (Steam, 2026): a save backup tool, a mod l
 |---|---|
 | [save-backup](save-backup/README.md) | Backs up and restores your saves, including Steam Cloud slots. Doesn't touch game files. |
 | [modloader](modloader/README.md) | Loads mods from a `mods` folder: scripts, styles, asset replacements and code patches. |
-| [mods/accessibility](mods/accessibility/README.md) | Colour-blind-safe ore palettes and interface scaling, switchable live with **F10**. |
+| [mods/accessibility](mods/accessibility/README.md) | Colour-blind-safe ore palettes, ore patterns, glow halo strength, a plainer font and interface scaling, switchable live with **F10**. |
 
 ## Quick start (Windows)
 1. Download this repository (**Code → Download ZIP**) and unzip it anywhere.
@@ -25,7 +25,9 @@ Several of the game's glowing ores are hard to tell apart:
 - **Ice and neutronium** look almost the same for everyone.
 - **Ice and dark matter** become identical with deuteranopia, the most common type of colour blindness.
 
-The pack recolours each ore's surface, glow and dig trail, and you can switch palettes live in game. A colour-vision simulation measured on the in-game surfaces puts the closest pair of ores at CIELAB ΔE 23.7 or more for every type of colour blindness, up from 6.5 in the stock game. Details are in the [pack's README](mods/accessibility/README.md).
+The pack recolours each ore's surface, glow and dig trail, and you can switch palettes live in game. For players who can't rely on colour at all, it can also draw a **pattern** on each glowing ore: dots, stripes, grid, checks, zigzag or rings.
+
+![Crystal ore with patterns off (left) and on (right)](screenshots/ore-patterns.png) A colour-vision simulation measured on the in-game surfaces puts the closest pair of ores at CIELAB ΔE 23.7 or more for every type of colour blindness, up from 6.5 in the stock game. Details are in the [pack's README](mods/accessibility/README.md).
 
 ![The F10 panel](screenshots/f10-panel.png)
 
@@ -35,6 +37,7 @@ The pack recolours each ore's surface, glow and dig trail, and you can switch pa
 - Co-op only checks that everyone runs the same game version. The mods don't change it.
 
 ## Tested on
+- No Asteroids 1.0.7 (full game)
 - No Asteroids, Steam build 26904996 (full game)
 - No Asteroids Demo, build 1.0.0-3edb4ef20
 

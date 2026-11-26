@@ -1,8 +1,8 @@
 {
     "name":  "Accessibility Pack",
-    "version":  "1.2.0",
+    "version":  "1.3.0",
     "author":  "no-asteroids-mods",
-    "description":  "Colour-blind-safe ore palettes and UI scaling. Press F10 in game for settings.",
+    "description":  "Colour-blind-safe ore palettes, ore patterns, glow halo strength, UI and text scaling. Press F10 in game for settings.",
     "scripts":  [
                     "palettes.js",
                     "panel.js"
@@ -236,6 +236,43 @@
                         "regex":  true,
                         "find":  "uSurfA:\\{value:(\\w+)\\.surfaces\\.albedo\\}",
                         "replace":  "uSurfA:self.__naA11y.surf({value:$1.surfaces.albedo})",
+                        "expect":  1
+                    },
+                    {
+                        "id":  "pattern-decl",
+                        "file":  "/assets/index-*.js",
+                        "regex":  true,
+                        "find":  "uniform vec4 uMatD\\[\\$\\{(\\w+)\\.length\\}\\];",
+                        "replace":  "$&\nuniform float uNaPat[${$1.length}];\nuniform float uNaPatK;\nuniform float uNaPatS;",
+                        "expect":  1
+                    },
+                    {
+                        "id":  "pattern-func",
+                        "file":  "/assets/index-*.js",
+                        "find":  "// one material's look at a point",
+                        "replace":  "// [Accessibility Pack] ore patterns: a shape per ore, so ores can be told apart without colour\nfloat naAA(float d, float hw, float f) { return 1.0 - smoothstep(hw - f, hw + f, d); }\nfloat naPat2(float k, vec2 q, float f) {\n  if (k < 1.5) return naAA(abs(fract(q.x + q.y) - 0.5), 0.17, f * 2.0);\n  if (k < 2.5) return naAA(length(fract(q) - 0.5), 0.24, f);\n  if (k < 3.5) { vec2 a = clamp((abs(fract(q) - 0.5) - 0.25) / max(f, 1e-4), -1.0, 1.0); return 0.5 - 0.5 * a.x * a.y; }\n  if (k < 4.5) { vec2 a = abs(fract(q) - 0.5); return naAA(min(a.x, a.y), 0.08, f); }\n  if (k < 5.5) return naAA(abs(fract(q.y + 2.0 * abs(fract(q.x) - 0.5)) - 0.5), 0.15, f * 2.0);\n  return naAA(abs(length(fract(q) - 0.5) - 0.3), 0.08, f);\n}\nvoid naPattern(inout VoxSurface s, int m, vec3 pos, vec3 w) {\n  float k = uNaPat[m];\n  if (k < 0.5 || uNaPatK <= 0.0) return;\n  vec3 p = pos * uNaPatS;\n  vec3 fp = fwidth(p);\n  float v = 0.0;\n  if (w.x > 0.02) v += w.x * naPat2(k, p.zy, max(fp.z, fp.y));\n  if (w.y > 0.02) v += w.y * naPat2(k, p.xz, max(fp.x, fp.z));\n  if (w.z > 0.02) v += w.z * naPat2(k, p.xy, max(fp.x, fp.y));\n  v *= uNaPatK * (1.0 - smoothstep(0.25, 0.6, max(max(fp.x, fp.y), fp.z)));\n  float lum = dot(s.albedo, vec3(0.2126, 0.7152, 0.0722));\n  s.albedo = mix(s.albedo, lum > 0.12 ? vec3(0.015) : vec3(0.5), v);\n  s.glow *= 1.0 - 0.85 * v;\n}\n\n// one material's look at a point",
+                        "expect":  1
+                    },
+                    {
+                        "id":  "pattern-apply",
+                        "file":  "/assets/index-*.js",
+                        "find":  "  return s;\n}\n\n// a druse crystal",
+                        "replace":  "  naPattern(s, m, pos, w);\n  return s;\n}\n\n// a druse crystal",
+                        "expect":  1
+                    },
+                    {
+                        "id":  "pattern-uniforms",
+                        "file":  "/assets/index-*.js",
+                        "regex":  true,
+                        "find":  "uMatD:\\{value:(\\w+)\\.d\\}",
+                        "replace":  "$&,uNaPat:self.__naA11y.pu(`pat`),uNaPatK:self.__naA11y.pu(`k`),uNaPatS:self.__naA11y.pu(`s`)",
+                        "expect":  1
+                    },
+                    {
+                        "id":  "bloom-strength",
+                        "file":  "/assets/index-*.js",
+                        "find":  "this.compositeMaterial.uniforms.bloomStrength.value=this.strength,",
+                        "replace":  "this.compositeMaterial.uniforms.bloomStrength.value=this.strength*self.__naA11y.bloom,",
                         "expect":  1
                     }
                 ]

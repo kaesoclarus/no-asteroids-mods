@@ -31,6 +31,16 @@
   border-radius: 0.4rem; padding: 0.35rem 0.8rem; cursor: pointer;
 }
 #na11y .na11y-scales button.on { background: #2b4a66; border-color: #8fd0ff; }
+#na11y .na11y-scales button[disabled] { opacity: 0.4; cursor: default; }
+#na11y .na11y-sw small { color: #9fb3c8; display: inline; margin: 0; }
+/* pattern previews, drawn like the shader draws them on the ores */
+#na11y .na11y-pat { width: 1.3rem; height: 1.3rem; border-radius: 0.2rem; display: inline-block; background-color: #dfe8f2; border: 1px solid #3a4656; }
+#na11y .na11y-pat-stripes { background-image: repeating-linear-gradient(45deg, #11161d 0 2px, transparent 2px 6px); }
+#na11y .na11y-pat-dots { background-image: radial-gradient(circle, #11161d 0 30%, transparent 33%); background-size: 6px 6px; }
+#na11y .na11y-pat-checks { background-image: conic-gradient(#11161d 25%, transparent 0 50%, #11161d 0 75%, transparent 0); background-size: 8px 8px; }
+#na11y .na11y-pat-grid { background-image: linear-gradient(#11161d 1.5px, transparent 0), linear-gradient(90deg, #11161d 1.5px, transparent 0); background-size: 6px 6px; }
+#na11y .na11y-pat-zigzag { background-image: linear-gradient(135deg, #11161d 25%, transparent 25%), linear-gradient(225deg, #11161d 25%, transparent 25%); background-size: 8px 8px; }
+#na11y .na11y-pat-rings { background-image: radial-gradient(circle, transparent 0 22%, #11161d 25% 40%, transparent 43%); background-size: 8px 8px; }
 #na11y button:focus-visible, #na11y input:focus-visible { outline: 2px solid #ffd060; outline-offset: 2px; }
 #na11y .na11y-warn { color: #ffd060; margin: 0.5rem 0 0; }
 #na11y .na11y-dim { color: #9fb3c8; font-size: 0.85rem; margin: 0.45rem 0 0; }

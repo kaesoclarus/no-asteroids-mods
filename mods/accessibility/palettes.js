@@ -8,6 +8,9 @@
  * game's live objects, so a palette switch updates them in place without a restart.
  *
  * Palettes were checked with a colour-vision simulation (Machado 2009, full severity); see README.md.
+ *
+ * Also here: ore patterns (uniforms read by a small function the patches add to the terrain shader) and the
+ * bloom strength multiplier read by the game's bloom pass every frame. Both are plain uniforms, so they're instant.
  */
 (function (g) {
   "use strict";
@@ -55,12 +58,36 @@
     return choice === "custom" ? (s.custom || {}) : ((PALETTES[choice] || PALETTES["default"]).ores);
   }
 
+  // ---- ore patterns: a shape for each glowing ore, drawn by the terrain shader on top of its surface, so ores can be
+  // told apart without relying on colour at all. 1 stripes, 2 dots, 3 checks, 4 grid, 5 zigzag, 6 rings.
+  var PATTERNS = { none: 0, stripes: 1, dots: 2, checks: 3, grid: 4, zigzag: 5, rings: 6 };
+  var DEFAULT_PATTERNS = {
+    ice: "dots", neutronium: "stripes", crystal: "grid",
+    darkMatter: "checks", plasmite: "zigzag", antimatter: "rings"
+  };
+  function patternsFor(s) {
+    var out = {}, k;
+    for (k in DEFAULT_PATTERNS) out[k] = DEFAULT_PATTERNS[k];
+    var own = s.oreHints && typeof s.oreHints === "object" ? s.oreHints : {};
+    for (k in own) if (typeof own[k] === "string" && own[k] in PATTERNS) out[k] = own[k];
+    return out;
+  }
+  var num = function (v, fb, lo, hi) { v = Number(v); return isFinite(v) ? Math.max(lo, Math.min(hi, v)) : fb; };
+
   var settings = readSettings();
   var state = {
     choice: typeof settings.palette === "string" ? settings.palette : "default",
     ores: oresFor(settings),
     textures: settings.textures !== false
   };
+  function readExtras(s) {
+    state.patterns = s.patterns === true;
+    state.patternStrength = num(s.patternStrength, 1, 0, 1);
+    state.patternScale = num(s.patternScale, 0.5, 0.05, 4);
+    state.patternMap = patternsFor(s);
+    state.bloom = num(s.bloom, 1, 0, 1);
+  }
+  readExtras(settings);
 
   // ---- colour helpers
   function hex(h) {
@@ -248,6 +275,30 @@
 
   var ids = null;   // ore name -> material index, from the game's material enum
 
+  // ---- pattern uniforms, shared by every terrain material (three.js keeps the {value} objects by reference, so
+  // changing .value here updates every material on its next frame - no shader recompile)
+  var pat = null;
+  function patUniforms() {
+    if (pat) return pat;
+    var n = 0;
+    if (ids) for (var k in ids) if (typeof ids[k] === "number") n = Math.max(n, ids[k] + 1);
+    pat = { pat: { value: new Float32Array(n || 64) }, k: { value: 0 }, s: { value: 0.5 } };
+    applyPatterns();
+    return pat;
+  }
+  function applyPatterns() {
+    if (!pat) return 0;
+    var arr = pat.pat.value, n = 0;
+    arr.fill(0);
+    if (ids) for (var ore in state.patternMap) {
+      var i = ids[ore], p = PATTERNS[state.patternMap[ore]] || 0;
+      if (typeof i === "number" && i < arr.length && p) { arr[i] = p; n++; }
+    }
+    pat.k.value = state.patterns ? state.patternStrength : 0;
+    pat.s.value = state.patternScale;
+    return state.patterns ? n : 0;
+  }
+
   var api = g.__naA11y = {
     palettes: PALETTES,
     get choice() { return state.choice; },
@@ -266,6 +317,12 @@
     trails: function (arr) { live.trails.push({ arr: arr, get ids() { return ids; } }); return arr; },
     table: function (p, m, gArr) { live.table = { p: p, m: m, g: gArr, get ids() { return ids; } }; },
     surf: function (u) { live.surfs.push(u); if (live.atlas && live.atlas.current) u.value = live.atlas.current; return u; },
+    /** the pattern uniforms for the terrain material: "pat" (per material), "k" (strength), "s" (cells per voxel) */
+    pu: function (name) { return patUniforms()[name]; },
+    /** bloom strength multiplier, read by the bloom pass every frame */
+    get bloom() { return state.bloom; },
+    patterns: PATTERNS,
+    get patternMap() { return state.patternMap; },
     atlas: function (tex, sample, layers, url) {
       if (!tex || !sample || !layers || !url) return Promise.resolve(tex);
       var names = [];
@@ -287,6 +344,8 @@
       state.choice = typeof s.palette === "string" ? s.palette : "default";
       state.ores = oresFor(s);
       state.textures = s.textures !== false;
+      readExtras(s);
+      applyPatterns();
       var n = applyColours();
       var t0 = Date.now();
       return applyAtlas().then(function () {
@@ -298,9 +357,11 @@
         return api.lastApply;
       });
     },
+    /** patterns and glow halo only: uniforms, so this is instant (no texture work) */
+    extras: function (s) { readExtras(s); return applyPatterns(); },
     /** whether the live hooks are in place (for the panel) */
     hooks: function () {
-      return { materials: live.mats.length, trails: live.trails.length, table: !!live.table, surfaces: live.surfs.length, atlas: !!live.atlas };
+      return { materials: live.mats.length, trails: live.trails.length, table: !!live.table, surfaces: live.surfs.length, atlas: !!live.atlas, patterns: !!pat };
     },
     /** read-only look at the live references (for tests and modders) */
     debug: function () { return { live: live, ids: ids, orig: ORIG }; },
