@@ -54,12 +54,87 @@
   // ---- panel
   var panel = null, open = false;
 
-  function swatches(key) {
+  var isHex = function (v) { return /^#[0-9a-f]{6}$/i.test(String(v || "")); };
+  /** an ore's glow colour in a palette ("custom" = the player's own), falling back to the game's original */
+  function glowOf(key, ore) {
     var p = key === "custom" ? { ores: settings.custom || {} } : A.palettes[key];
+    var c = p && p.ores && p.ores[ore] && p.ores[ore].glow;
+    if (isHex(c)) return c.toLowerCase();
+    for (var i = 0; i < GLOWING.length; i++) if (GLOWING[i][0] === ore) return GLOWING[i][2];
+    return "#ffffff";
+  }
+
+  function swatches(key) {
     return GLOWING.map(function (o) {
-      var c = (p && p.ores && p.ores[o[0]] && p.ores[o[0]].glow) || o[2];
+      var c = glowOf(key, o[0]);
       return '<span class="na11y-sw" title="' + o[1] + '"><i style="background:' + c + ';box-shadow:0 0 .5rem ' + c + '"></i>' + o[1] + "</span>";
     }).join("");
+  }
+
+  /** copies a palette's glow colours into the custom palette (keeps any other per-ore settings from settings.json) */
+  function seedCustom(from) {
+    var c = settings.custom && typeof settings.custom === "object" ? settings.custom : {};
+    GLOWING.forEach(function (o) {
+      var e = c[o[0]] && typeof c[o[0]] === "object" ? c[o[0]] : (c[o[0]] = {});
+      e.glow = glowOf(from, o[0]);
+    });
+    settings.custom = c;
+  }
+
+  // ---- how far apart the custom colours stay for each type of colour vision (Machado et al. 2009, full severity),
+  // as CIELAB ΔE between the two closest glowing ores. The built-in palettes were checked the same way.
+  var CVD = {
+    normal: null,
+    protan: [[0.152286, 1.052583, -0.204868], [0.114503, 0.786281, 0.099216], [-0.003882, -0.048116, 1.051998]],
+    deutan: [[0.367322, 0.860646, -0.227968], [0.280085, 0.672501, 0.047413], [-0.011820, 0.042940, 0.968881]],
+    tritan: [[1.255528, -0.076749, -0.178779], [-0.078411, 0.930809, 0.147602], [0.004733, 0.691367, 0.303900]]
+  };
+  var CVD_NAME = { normal: "normal colour vision", protan: "protanopia", deutan: "deuteranopia", tritan: "tritanopia" };
+  function lab(hexc, m) {
+    var n = parseInt(hexc.slice(1), 16);
+    var c = [(n >> 16) & 255, (n >> 8) & 255, n & 255].map(function (v) {
+      v /= 255; return v <= 0.04045 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4);
+    });
+    if (m) c = m.map(function (r) { return Math.max(0, Math.min(1, r[0] * c[0] + r[1] * c[1] + r[2] * c[2])); });
+    var x = (0.4124 * c[0] + 0.3576 * c[1] + 0.1805 * c[2]) / 0.95047;
+    var y = 0.2126 * c[0] + 0.7152 * c[1] + 0.0722 * c[2];
+    var z = (0.0193 * c[0] + 0.1192 * c[1] + 0.9505 * c[2]) / 1.08883;
+    var f = function (t) { return t > 0.008856 ? Math.cbrt(t) : 7.787 * t + 16 / 116; };
+    return [116 * f(y) - 16, 500 * (f(x) - f(y)), 200 * (f(y) - f(z))];
+  }
+  /** the closest pair of custom ore colours: { d, a, b, vision } over all four types of vision */
+  function closestPair() {
+    var worst = null;
+    Object.keys(CVD).forEach(function (v) {
+      var L = GLOWING.map(function (o) { return lab(glowOf("custom", o[0]), CVD[v]); });
+      for (var i = 0; i < L.length; i++) for (var j = i + 1; j < L.length; j++) {
+        var d = Math.sqrt(Math.pow(L[i][0] - L[j][0], 2) + Math.pow(L[i][1] - L[j][1], 2) + Math.pow(L[i][2] - L[j][2], 2));
+        if (!worst || d < worst.d) worst = { d: d, a: GLOWING[i][1], b: GLOWING[j][1], vision: v };
+      }
+    });
+    return worst;
+  }
+
+  function customEditor() {
+    var pickers = GLOWING.map(function (o) {
+      return '<label class="na11y-pick"><input type="color" data-ore="' + o[0] + '" value="' + glowOf("custom", o[0]) + '"' +
+        (applying ? " disabled" : "") + ">" + o[1] + "</label>";
+    }).join("");
+    var w = closestPair(), check;
+    if (w.d < 12) {
+      check = '<p class="na11y-warn">' + w.a + " and " + w.b + " look almost the same with " + CVD_NAME[w.vision] +
+        " (ΔE " + w.d.toFixed(1) + "). Try changing one of them, or turn on ore patterns.</p>";
+    } else if (w.d < 20) {
+      check = '<p class="na11y-dim">Closest pair: ' + w.a + " and " + w.b + " with " + CVD_NAME[w.vision] +
+        " (ΔE " + w.d.toFixed(1) + "). Fine for most players; above 20 is clearly apart.</p>";
+    } else {
+      check = '<p class="na11y-dim">All six stay clearly apart for every type of colour vision (closest ΔE ' + w.d.toFixed(1) + ").</p>";
+    }
+    var starts = Object.keys(A.palettes).map(function (k) {
+      return '<button type="button" data-from="' + k + '"' + (applying ? " disabled" : "") + ">" + A.palettes[k].name + "</button>";
+    }).join("");
+    return '<div class="na11y-custom"><div class="na11y-picks">' + pickers + "</div>" + check +
+      '<p class="na11y-dim">Start again from:</p><div class="na11y-scales">' + starts + "</div></div>";
   }
 
   function patchStatus() {
@@ -89,13 +164,12 @@
 
   function render() {
     var pal = settings.palette;
-    var keys = Object.keys(A.palettes);
-    if (settings.custom && Object.keys(settings.custom).length) keys.push("custom");
+    var keys = Object.keys(A.palettes).concat("custom");
     var rows = keys.map(function (k) {
-      var p = k === "custom" ? { name: "Custom", note: "Your colours from settings.json." } : A.palettes[k];
+      var p = k === "custom" ? { name: "Custom", note: "Pick your own colour for each glowing ore." } : A.palettes[k];
       return '<label class="na11y-pal' + (pal === k ? " on" : "") + '"><input type="radio" name="na11y-pal" value="' + k + '"' +
         (pal === k ? " checked" : "") + "><b>" + p.name + "</b>" + (p.note ? "<small>" + p.note + "</small>" : "") +
-        '<span class="na11y-sws">' + swatches(k) + "</span></label>";
+        '<span class="na11y-sws">' + swatches(k) + "</span></label>" + (k === "custom" && pal === "custom" ? customEditor() : "");
     }).join("");
     var texWanted = settings.textures !== false;
     var restart = applying ? '<p class="na11y-warn">Applying…</p>'
@@ -141,7 +215,33 @@
     panel.querySelector(".na11y-x").onclick = toggle;
     Array.prototype.forEach.call(panel.querySelectorAll('input[name="na11y-pal"]'), function (r) {
       r.disabled = applying;
-      r.onchange = function () { settings.palette = r.value; save(); applyLive(); };
+      r.onchange = function () {
+        // the first time, Custom starts from the palette that was on, so the player tweaks rather than starts blank
+        if (r.value === "custom" && !GLOWING.some(function (o) { return settings.custom && settings.custom[o[0]] && isHex(settings.custom[o[0]].glow); })) {
+          seedCustom(settings.palette);
+        }
+        settings.palette = r.value; save(); applyLive();
+      };
+    });
+    // colour pickers: "input" fires while dragging (swatches and the check update), "change" when the picker closes
+    Array.prototype.forEach.call(panel.querySelectorAll("input[data-ore]"), function (inp) {
+      var set = function () {
+        var ore = inp.getAttribute("data-ore");
+        var e = settings.custom[ore] && typeof settings.custom[ore] === "object" ? settings.custom[ore] : (settings.custom[ore] = {});
+        e.glow = inp.value.toLowerCase();
+      };
+      inp.oninput = function () {
+        set();
+        var row = panel.querySelector('input[value="custom"]').closest("label");
+        row.querySelector(".na11y-sws").innerHTML = swatches("custom");
+        var p = panel.querySelector(".na11y-custom p");
+        var tmp = document.createElement("div"); tmp.innerHTML = customEditor();
+        p.replaceWith(tmp.querySelector(".na11y-custom p"));
+      };
+      inp.onchange = function () { set(); save(); applyLive(); };
+    });
+    Array.prototype.forEach.call(panel.querySelectorAll("[data-from]"), function (b) {
+      b.onclick = function () { seedCustom(b.getAttribute("data-from")); save(); applyLive(); };
     });
     var texBox = panel.querySelector("#na11y-tex");
     if (texBox) texBox.onchange = function () { settings.textures = texBox.checked; save(); applyLive(); };

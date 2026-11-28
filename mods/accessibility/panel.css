@@ -41,6 +41,12 @@
 #na11y .na11y-pat-grid { background-image: linear-gradient(#11161d 1.5px, transparent 0), linear-gradient(90deg, #11161d 1.5px, transparent 0); background-size: 6px 6px; }
 #na11y .na11y-pat-zigzag { background-image: linear-gradient(135deg, #11161d 25%, transparent 25%), linear-gradient(225deg, #11161d 25%, transparent 25%); background-size: 8px 8px; }
 #na11y .na11y-pat-rings { background-image: radial-gradient(circle, transparent 0 22%, #11161d 25% 40%, transparent 43%); background-size: 8px 8px; }
+/* custom palette editor, shown under the Custom row */
+#na11y .na11y-custom { margin: -0.1rem 0 0.5rem; padding: 0.5rem 0.7rem 0.6rem 2.3rem; border: 1px solid #8fd0ff; border-top: 0; border-radius: 0 0 0.45rem 0.45rem; background: #141c27; }
+#na11y .na11y-picks { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.4rem 0.8rem; }
+#na11y .na11y-pick { display: flex; align-items: center; gap: 0.45rem; font-size: 0.9rem; cursor: pointer; }
+#na11y .na11y-pick input { width: 2.2rem; height: 1.6rem; padding: 0; border: 1px solid #3a4656; border-radius: 0.3rem; background: none; cursor: pointer; }
+#na11y .na11y-pick input[disabled] { opacity: 0.4; cursor: default; }
 #na11y button:focus-visible, #na11y input:focus-visible { outline: 2px solid #ffd060; outline-offset: 2px; }
 #na11y .na11y-warn { color: #ffd060; margin: 0.5rem 0 0; }
 #na11y .na11y-dim { color: #9fb3c8; font-size: 0.85rem; margin: 0.45rem 0 0; }

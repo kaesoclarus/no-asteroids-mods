@@ -13,6 +13,7 @@ The pack recolours each ore's **surface texture**, its glow, its dig trail and i
 |---|---|
 | **Colorblind-safe** | Any type of colour blindness. Every pair of glowing ores stays clearly apart for normal, protan, deutan and tritan vision. |
 | **Okabe-Ito** | The well-known colour-blind-friendly set used in science figures. |
+| **Custom** | Your own colour for each glowing ore. See [Your own colours](#your-own-colours). |
 | Game default | No change. |
 
 The palettes were checked with a colour-vision simulation (Machado et al. 2009, full severity). Each table shows the closest pair of glowing ores, in CIELAB ΔE; under ~10 means easily confused.
@@ -52,7 +53,20 @@ The pack only changes what **your** screen shows, so each player can pick their 
 - Co-op only checks that everyone runs the same game version. The mod doesn't change the version.
 
 ### Your own colours
-Edit `mods\accessibility\settings.json`:
+Pick **Custom** in the F10 panel. A colour picker appears for each glowing ore, starting from the palette you had on.
+
+![The Custom palette's colour pickers](../../screenshots/custom-colours.png)
+
+- Ores recolour live when you close a picker.
+- Under the pickers, the panel shows how far apart your two closest ores stay, using the same colour-vision simulation as the tables above, across normal, protan, deutan and tritan vision:
+  - **ΔE under 12:** a warning names the pair and suggests changing one or turning on ore patterns.
+  - **12 to 20:** fine for most players.
+  - **Over 20:** clearly apart.
+- **Start again from** resets the pickers to one of the built-in palettes.
+
+The check uses the glow colours. Surface textures keep their own detail and brightness, so in game the ores usually look a little further apart than the number suggests.
+
+For more control, edit `mods\accessibility\settings.json`. The panel saves its pickers here too:
 ```json
 {
   "palette": "custom",

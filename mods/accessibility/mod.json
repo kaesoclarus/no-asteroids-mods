@@ -1,6 +1,6 @@
 {
     "name":  "Accessibility Pack",
-    "version":  "1.3.1",
+    "version":  "1.4.0",
     "author":  "no-asteroids-mods",
     "description":  "Colour-blind-safe ore palettes, ore patterns, glow halo strength, UI and text scaling. Press F10 in game for settings.",
     "scripts":  [
