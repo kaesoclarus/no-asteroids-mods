@@ -36,7 +36,7 @@ param(
 
 $ErrorActionPreference = 'Stop'
 $Here = Split-Path -Parent $MyInvocation.MyCommand.Path
-$LoaderVersion = '1.1.0'
+$LoaderVersion = '1.1.1'
 
 Add-Type -Path (Join-Path $Here 'AsarTool.cs') -ReferencedAssemblies System.Web.Extensions
 
@@ -173,7 +173,11 @@ switch ($Command) {
         $loaderPage = (Get-Content (Join-Path $Here 'loader-page.js') -Raw -Encoding UTF8) -replace "`r`n", "`n"
 
         $main = Replace-Once $main "`"use strict`";`n" ("`"use strict`";`n" + $loaderMain + "`n") 'main.cjs header'
-        $main = Replace-Once $main "    const path = webPath(pathname);`n" ("    const __modded = await __naMods.handle(req, pathname, webPath, import_electron11.net, import_node_url.pathToFileURL);`n    if (__modded) return __modded;`n    const path = webPath(pathname);`n") 'game file server'
+        # the game's file server: the electron import's name and the line that maps a URL to a file both change between versions
+        $el = [regex]::Matches($main, '(import_electron\d*)\.protocol\.handle\("app"')
+        $srv = [regex]::Matches($main, '(?m)^    const path = [^\n]*webPath\(pathname\);\n')
+        if ($el.Count -ne 1 -or $srv.Count -ne 1) { throw "Can't patch the game file server - this game version's code differs from what the loader expects. Nothing was changed." }
+        $main = $main.Insert($srv[0].Index, "    const __modded = await __naMods.handle(req, pathname, webPath, $($el[0].Groups[1].Value).net, import_node_url.pathToFileURL);`n    if (__modded) return __modded;`n")
         $main = Replace-Once $main 'typeof pathname === "string" ? webPath(pathname) : null' 'typeof pathname === "string" ? (__naMods.resolve(pathname) ?? webPath(pathname)) : null' 'file reader'
         $main = Replace-Once $main "  const wc = page;`n" ("  const wc = page;`n" + '  if (__naMods.devtools) wc.on("before-input-event", (_e, i) => { if (i.type === "keyDown" && i.key === "F12") wc.toggleDevTools(); });' + "`n") 'window setup'
         $m = [regex]::Match($html, '<script type="module" crossorigin src="/assets/index-[^"]+"></script>')

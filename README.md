@@ -37,6 +37,7 @@ The pack recolours each ore's surface, glow and dig trail, and you can switch pa
 - Co-op only checks that everyone runs the same game version. The mods don't change it.
 
 ## Tested on
+- No Asteroids 1.0.9 (full game)
 - No Asteroids 1.0.7 (full game)
 - No Asteroids, Steam build 26904996 (full game)
 - No Asteroids Demo, build 1.0.0-3edb4ef20

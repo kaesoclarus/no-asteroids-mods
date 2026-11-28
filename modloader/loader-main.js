@@ -2,7 +2,7 @@
 var __naMods = (() => {
   const fs = require("node:fs"), path = require("node:path");
   const root = path.join(path.dirname(process.execPath), "mods");
-  const out = { version: "1.1.0", root, devtools: false, mods: [], overrides: new Map(), patches: [], report: [], errors: [] };
+  const out = { version: "1.1.1", root, devtools: false, mods: [], overrides: new Map(), patches: [], report: [], errors: [] };
   const readJson = (f) => JSON.parse(fs.readFileSync(f, "utf8").trim()); // trim() also drops a BOM (Notepad, PowerShell)
   const inside = (base, rel) => {
     const r = path.resolve(base, rel);
